@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNJBG - Calificaciones</title>
+  <!-- Fuente similar Montserrat / Open Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Iconos Lucide / FontAwesome estilo vectorial -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="shortcut icon" href="icon.png" />
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background-color: #f3f3f3;
+      display: flex;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    /* --- SIDEBAR IZQUIERDO --- */
+    .sidebar {
+      width: 70px;
+      background-color: #a80000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 15px;
+      position: fixed;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      z-index: 100;
+    }
+
+    .sidebar .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 10px;
+      text-align: center;
+      padding: 12px 5px;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .sidebar .nav-item:hover, .sidebar .nav-item.active {
+      background-color: #800000;
+    }
+
+    .sidebar .nav-item i {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    /* --- CONTENIDO PRINCIPAL --- */
+    .main-wrapper {
+      margin-left: 70px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* BARRA SUPERIOR NAV */
+    .top-header {
+      background-color: #eef1f5;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .top-header .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-header .brand-logo img {
+      height: 38px;
+    }
+
+    .top-header .brand-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0d3b66;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .header-user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-icons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #555;
+    }
+
+    .header-icons i {
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-details {
+      text-align: right;
+    }
+
+    .user-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: #a80000;
+      font-weight: 600;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: #777;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    /* BREADCRUMB */
+    .breadcrumb-bar {
+      padding: 15px 30px 5px 30px;
+      font-size: 12px;
+      color: #777;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .breadcrumb-bar i {
+      font-size: 12px;
+    }
+
+    /* CONTENEDOR DE TARJETAS */
+    .container {
+      padding: 15px 30px 40px 30px;
+      max-width: 1200px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 4px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* INFORMACIÓN DEL ESTUDIANTE */
+    .student-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .student-header h2 {
+      font-size: 16px;
+      color: #444;
+      font-weight: 600;
+    }
+
+    .period-select {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .period-select select {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 12px;
+      outline: none;
+      color: #444;
+    }
+
+    .student-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 40px;
+      font-size: 12px;
+    }
+
+    .student-grid .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+
+    .student-grid .label {
+      font-weight: 700;
+      color: #444;
+    }
+
+    .student-grid .value {
+      color: #666;
+    }
+
+    /* LISTADO DE CALIFICACIONES */
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .list-header h2 {
+      font-size: 16px;
+      color: #444;
+      font-weight: 600;
+    }
+
+    .top-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-yellow {
+      background-color: #cbb000;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      font-size: 11px;
+      border-radius: 3px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-silabo {
+      background-color: #cbb000;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      font-size: 11px;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* TABLA DE CURSOS */
+    .course-block {
+      margin-top: 30px;
+      border: 1px solid #e0e0e0;
+      border-radius: 2px;
+    }
+
+    .course-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background-color: #fff;
+    }
+
+    .course-table td, .course-table th {
+      border: 1px solid #e2e8f0;
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    .bg-light-gray {
+      background-color: #f7f9fa;
+    }
+
+    .bg-unit-header {
+      background-color: #ececec;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .text-center {
+      text-align: center !important;
+    }
+
+    .text-right {
+      text-align: right !important;
+    }
+
+    .text-red {
+      color: #e53e3e;
+    }
+
+    .text-blue {
+      color: #0000ff;
+      font-weight: bold;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .info-icon {
+      color: #e53e3e;
+      font-size: 11px;
+      margin-left: 3px;
+    }
+
+    /* BOTÓN FLOTANTE VOLVER ARRIBA */
+    .scroll-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-house"></i>
+      <span>Inicio</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-calendar-days"></i>
+      <span>Horario de Clases</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-hand-holding-dollar"></i>
+      <span>Pagos</span>
+    </a>
+    <a href="#" class="nav-item active">
+      <i class="fa-solid fa-circle-question"></i>
+      <span>Info. Académica</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-clipboard-list"></i>
+      <span>Foro</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-clipboard"></i>
+      <span>Portafolio</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-circle-question"></i>
+      <span>Encuestas</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-pen-to-square"></i>
+      <span>Inscripcion Eventos</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-file-lines"></i>
+      <span>Trámites</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-brain"></i>
+      <span>Psicología</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fa-solid fa-pen-to-square"></i>
+      <span>Solicitudes de Defensoría</span>
+    </a>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-wrapper">
+    
+    <!-- ENCABEZADO DE NAVEGACIÓN -->
+    <header class="top-header">
+      <div class="brand-logo">
+  <img src="image-logo.png" height="38">
+        <div class="brand-text">
+          UNIVERSIDAD NACIONAL<br>JORGE BASADRE GROHMANN
+        </div>
+      </div>
+
+      <div class="header-user-info">
+        <div class="header-icons">
+          <i class="fa-solid fa-table-cells"></i>
+          <i class="fa-regular fa-bell"></i>
+        </div>
+        <div class="user-profile">
+          <div class="user-details">
+            <div class="user-name">FORAQUITA INGARUCA JOSEPH ANTHONY</div>
+            <div class="user-role">Alumnos</div>
+          </div>
+          <div class="user-avatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-bar">
+      <i class="fa-solid fa-house"></i>
+      <span>&gt;</span>
+      <span>Calificaciones</span>
+    </div>
+
+    <main class="container">
+      
+      <!-- SECCIÓN INFORMACIÓN DEL ESTUDIANTE -->
+      <section class="card">
+        <div class="student-header">
+          <h2>Información del Estudiante</h2>
+          <div class="period-select">
+            <label>Periodo:</label>
+            <select>
+              <option>2026-I</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="student-grid">
+          <div>
+            <div class="row"><span class="label">Estudiante:</span><span class="value">FORAQUITA INGARUCA JOSEPH ANTHONY</span></div>
+            <div class="row"><span class="label">Escuela:</span><span class="value">Ingeniería en Informática y Sistemas</span></div>
+            <div class="row"><span class="label">N° de Cursos:</span><span class="value">7</span></div>
+            <div class="row"><span class="label">Promedio Ponderado Semestral:</span><span class="value">-</span></div>
+            <div class="row"><span class="label">Orden de Mérito:</span><span class="value">-</span></div>
+          </div>
+          <div>
+            <div class="row"><span class="label">Código:</span><span class="value">2026-119036</span></div>
+            <div class="row"><span class="label">Nivel:</span><span class="value">1</span></div>
+            <div class="row"><span class="label">Total de Créditos:</span><span class="value">23.0</span></div>
+            <div class="row"><span class="label">Promedio Ponderado Acumulado:</span><span class="value">-</span></div>
+            <div class="row"><span class="label">Cuadro de Mérito:</span><span class="value">-</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN LISTADO DE CALIFICACIONES -->
+      <section class="list-header">
+        <h2>Listado de Calificaciones</h2>
+        <div class="top-buttons">
+          <button class="btn-yellow">Ficha Matrícula</button>
+          <button class="btn-yellow">Boleta de Notas</button>
+        </div>
+      </section>
+
+      <!-- CURSO 1: MATEMÁTICA BÁSICA -->
+      <div class="course-block">
+        <table class="course-table">
+          <tr>
+            <td class="bg-light-gray font-bold" style="width: 25%;">Curso:</td>
+            <td colspan="4">19.01501 - MATEMÁTICA BÁSICA</td>
+            <td class="text-right" style="width: 10%;">
+              <button class="btn-silabo"><i class="fa-solid fa-download"></i> Sílabo</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Sección:</td>
+            <td>A</td>
+            <td class="bg-light-gray font-bold" style="width: 10%;">Vez:</td>
+            <td>1</td>
+            <td class="bg-light-gray font-bold" style="width: 15%;">Créditos:</td>
+            <td>4.0</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Fórmula:</td>
+            <td colspan="5">(U1 + U2) / 2</td>
+          </tr>
+        </table>
+
+        <table class="course-table">
+          <thead>
+            <tr class="bg-light-gray">
+              <th class="font-bold" style="width: 50%;">Nombre</th>
+              <th class="font-bold text-center" style="width: 25%;">Porcentaje</th>
+              <th class="font-bold text-center" style="width: 25%;">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-unit-header">
+              <td>UNIDAD 1</td>
+              <td class="text-center">-</td>
+              <td class="text-center">17.2</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">17.20</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">20 %</td>
+              <td class="text-center">17.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">17.30</td>
+            </tr>
+            <tr class="bg-unit-header">
+              <td>UNIDAD 2</td>
+              <td class="text-center">-</td>
+              <td class="text-center">17.6</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">17.70</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">20 %</td>
+              <td class="text-center">17.40</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">17.60</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Nota No Oficial:</td>
+              <td></td>
+              <td class="text-center font-bold">17</td>
+            </tr>
+            <tr>
+              <td class="bg-light-gray font-bold">Observaciones:</td>
+              <td colspan="2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CURSO 2: COMUNICACIÓN Y REDACCIÓN -->
+      <div class="course-block">
+        <table class="course-table">
+          <tr>
+            <td class="bg-light-gray font-bold" style="width: 25%;">Curso:</td>
+            <td colspan="5">19.01502 - COMUNICACIÓN Y REDACCIÓN</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Sección:</td>
+            <td>B</td>
+            <td class="bg-light-gray font-bold" style="width: 10%;">Vez:</td>
+            <td>1</td>
+            <td class="bg-light-gray font-bold" style="width: 15%;">Créditos:</td>
+            <td>3.0</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Fórmula:</td>
+            <td colspan="5">(U1 + U2) / 2</td>
+          </tr>
+        </table>
+
+        <table class="course-table">
+          <thead>
+            <tr class="bg-light-gray">
+              <th class="font-bold" style="width: 50%;">Nombre</th>
+              <th class="font-bold text-center" style="width: 25%;">Porcentaje</th>
+              <th class="font-bold text-center" style="width: 25%;">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-unit-header">
+              <td>1° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">16.6</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">15.50</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">16.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">18.00</td>
+            </tr>
+            <tr class="bg-unit-header">
+              <td>2° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">17.6</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">17.50</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">16.50</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">19.00</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Nota Oficial:</td>
+              <td></td>
+              <td class="text-center font-bold">17</td>
+            </tr>
+            <tr>
+              <td class="bg-light-gray font-bold">Observaciones:</td>
+              <td colspan="2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CURSO 3: INTRODUCCIÓN A LAS HERRAMIENTAS DIGITALES -->
+      <div class="course-block">
+        <table class="course-table">
+          <tr>
+            <td class="bg-light-gray font-bold" style="width: 25%;">Curso:</td>
+            <td colspan="4">19.01503 - INTRODUCCIÓN A LAS HERRAMIENTAS DIGITALES</td>
+            <td class="text-right" style="width: 10%;">
+              <button class="btn-silabo"><i class="fa-solid fa-download"></i> Sílabo</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Sección:</td>
+            <td>A</td>
+            <td class="bg-light-gray font-bold" style="width: 10%;">Vez:</td>
+            <td>1</td>
+            <td class="bg-light-gray font-bold" style="width: 15%;">Créditos:</td>
+            <td>3.0</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Fórmula:</td>
+            <td colspan="5">(U1 + U2) / 2</td>
+          </tr>
+        </table>
+
+        <table class="course-table">
+          <thead>
+            <tr class="bg-light-gray">
+              <th class="font-bold" style="width: 50%;">Nombre</th>
+              <th class="font-bold text-center" style="width: 25%;">Porcentaje</th>
+              <th class="font-bold text-center" style="width: 25%;">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-unit-header">
+              <td>1° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">16.3</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">15.80</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">16.40</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">16.90</td>
+            </tr>
+            <tr class="bg-unit-header">
+              <td>2° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">16.3</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">16.90</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">16.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">17.00</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Nota Oficial:</td>
+              <td></td>
+              <td class="text-center font-bold">16</td>
+            </tr>
+            <tr>
+              <td class="bg-light-gray font-bold">Observaciones:</td>
+              <td colspan="2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <!-- CURSO 4 19.01504 - QUÍMICA -->
+      <div class="course-block">
+        <table class="course-table">
+          <tr>
+            <td class="bg-light-gray font-bold" style="width: 25%;">Curso:</td>
+            <td colspan="4">19.01504 - QUÍMICA</td>
+            <td class="text-right" style="width: 10%;">
+              <button class="btn-silabo"><i class="fa-solid fa-download"></i> Sílabo</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Sección:</td>
+            <td>A</td>
+            <td class="bg-light-gray font-bold" style="width: 10%;">Vez:</td>
+            <td>1</td>
+            <td class="bg-light-gray font-bold" style="width: 15%;">Créditos:</td>
+            <td>3.0</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Fórmula:</td>
+            <td colspan="5">(U1 + U2) / 2</td>
+          </tr>
+        </table>
+
+        <table class="course-table">
+          <thead>
+            <tr class="bg-light-gray">
+              <th class="font-bold" style="width: 50%;">Nombre</th>
+              <th class="font-bold text-center" style="width: 25%;">Porcentaje</th>
+              <th class="font-bold text-center" style="width: 25%;">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-unit-header">
+              <td>1° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">14.8</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">14.50</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">15.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">15.20</td>
+            </tr>
+            <tr class="bg-unit-header">
+              <td>2° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">15.2</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">15.30</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">15.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">15.20</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Nota Oficial:</td>
+              <td></td>
+              <td class="text-center font-bold">15</td>
+            </tr>
+            <tr>
+              <td class="bg-light-gray font-bold">Observaciones:</td>
+              <td colspan="2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CURSO 5 19.01505 - EDUCACIÓN INCLUSIVA -->
+      <div class="course-block">
+        <table class="course-table">
+          <tr>
+            <td class="bg-light-gray font-bold" style="width: 25%;">Curso:</td>
+            <td colspan="4">19.01505 - EDUCACIÓN INCLUSIVA</td>
+            <td class="text-right" style="width: 10%;">
+              <button class="btn-silabo"><i class="fa-solid fa-download"></i> Sílabo</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Sección:</td>
+            <td>A</td>
+            <td class="bg-light-gray font-bold" style="width: 10%;">Vez:</td>
+            <td>1</td>
+            <td class="bg-light-gray font-bold" style="width: 15%;">Créditos:</td>
+            <td>2.0</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Fórmula:</td>
+            <td colspan="5">(U1 + U2) / 2</td>
+          </tr>
+        </table>
+
+        <table class="course-table">
+          <thead>
+            <tr class="bg-light-gray">
+              <th class="font-bold" style="width: 50%;">Nombre</th>
+              <th class="font-bold text-center" style="width: 25%;">Porcentaje</th>
+              <th class="font-bold text-center" style="width: 25%;">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-unit-header">
+              <td>1° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">16.4</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">18.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">16.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">20 %</td>
+              <td class="text-center">14.00</td>
+            </tr>
+            <tr class="bg-unit-header">
+              <td>2° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">16.6</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">17.50</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">16.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">30 %</td>
+              <td class="text-center">16.00</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Nota Oficial:</td>
+              <td></td>
+              <td class="text-center font-bold">17</td>
+            </tr>
+            <tr>
+              <td class="bg-light-gray font-bold">Observaciones:</td>
+              <td colspan="2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- CURSO 6 19.01506 - FUNDAMENTOS DE PROGRAMACIÓN -->
+      <div class="course-block">
+        <table class="course-table">
+          <tr>
+            <td class="bg-light-gray font-bold" style="width: 25%;">Curso:</td>
+            <td colspan="4">19.01506 - FUNDAMENTOS DE PROGRAMACIÓN</td>
+            <td class="text-right" style="width: 10%;">
+              <button class="btn-silabo"><i class="fa-solid fa-download"></i> Sílabo</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Sección:</td>
+            <td>A</td>
+            <td class="bg-light-gray font-bold" style="width: 10%;">Vez:</td>
+            <td>1</td>
+            <td class="bg-light-gray font-bold" style="width: 15%;">Créditos:</td>
+            <td>4.0</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Fórmula:</td>
+            <td colspan="5">(U1 + U2) / 2</td>
+          </tr>
+        </table>
+
+        <table class="course-table">
+          <thead>
+            <tr class="bg-light-gray">
+              <th class="font-bold" style="width: 50%;">Nombre</th>
+              <th class="font-bold text-center" style="width: 25%;">Porcentaje</th>
+              <th class="font-bold text-center" style="width: 25%;">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-unit-header">
+              <td>1° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">15.2</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">17.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">35 %</td>
+              <td class="text-center">13.40</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">25 %</td>
+              <td class="text-center">15.00</td>
+            </tr>
+            <tr class="bg-unit-header">
+              <td>2° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">16.3</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">15.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">35 %</td>
+              <td class="text-center">18.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">25 %</td>
+              <td class="text-center">16.00</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Nota Oficial:</td>
+              <td></td>
+              <td class="text-center font-bold">16</td>
+            </tr>
+            <tr>
+              <td class="bg-light-gray font-bold">Observaciones:</td>
+              <td colspan="2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <!-- CURSO 6 19.01506 - grafica -->
+      <div class="course-block">
+        <table class="course-table">
+          <tr>
+            <td class="bg-light-gray font-bold" style="width: 25%;">Curso:</td>
+            <td colspan="4">19.01507 - PROGRAMACIÓN GRÁFICA</td>
+            <td class="text-right" style="width: 10%;">
+              <button class="btn-silabo"><i class="fa-solid fa-download"></i> Sílabo</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Sección:</td>
+            <td>A</td>
+            <td class="bg-light-gray font-bold" style="width: 10%;">Vez:</td>
+            <td>1</td>
+            <td class="bg-light-gray font-bold" style="width: 15%;">Créditos:</td>
+            <td>4.0</td>
+          </tr>
+          <tr>
+            <td class="bg-light-gray font-bold">Fórmula:</td>
+            <td colspan="5">(U1 + U2) / 2</td>
+          </tr>
+        </table>
+
+        <table class="course-table">
+          <thead>
+            <tr class="bg-light-gray">
+              <th class="font-bold" style="width: 50%;">Nombre</th>
+              <th class="font-bold text-center" style="width: 25%;">Porcentaje</th>
+              <th class="font-bold text-center" style="width: 25%;">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-unit-header">
+              <td>1° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">16.8</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">35 %</td>
+              <td class="text-center">13.50</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">19.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">25 %</td>
+              <td class="text-center">18.00</td>
+            </tr>
+            <tr class="bg-unit-header">
+              <td>2° PARCIAL</td>
+              <td class="text-center">-</td>
+              <td class="text-center">15.9</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EC</td>
+              <td class="text-center">35 %</td>
+              <td class="text-center">14.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">ED</td>
+              <td class="text-center">40 %</td>
+              <td class="text-center">18.00</td>
+            </tr>
+            <tr>
+              <td style="padding-left: 30px;">EP</td>
+              <td class="text-center">25 %</td>
+              <td class="text-center">15.00</td>
+            </tr>
+            <tr>
+              <td class="font-bold">Nota Oficial:</td>
+              <td></td>
+              <td class="text-center font-bold">16</td>
+            </tr>
+            <tr>
+              <td class="bg-light-gray font-bold">Observaciones:</td>
+              <td colspan="2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- BOTÓN VOLVER ARRIBA -->
+  <div class="scroll-top">
+    <i class="fa-solid fa-arrow-up"></i>
+  </div>
+
+</body>
+</html>
